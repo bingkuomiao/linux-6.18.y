@@ -162,6 +162,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-max-plus-oc.dtb
 dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-max-plus-q1.dtb
 dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-max-plus-q2.dtb
 dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-max-plus.dtb
+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-cumebox2-fn.dtb
 
 # Overlays
 meson-g12a-fbx8am-brcm-dtbs	:= meson-g12a-fbx8am.dtb meson-g12a-fbx8am-brcm.dtbo
