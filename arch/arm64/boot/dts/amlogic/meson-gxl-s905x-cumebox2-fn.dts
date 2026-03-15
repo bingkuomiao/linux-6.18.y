@@ -1,0 +1,270 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2016 Endless Computers, Inc.
+ * Author: Carlo Caione <carlo@endlessm.com>
+ */
+
+/dts-v1/;
+
+#include "meson-gxl-s905x-p212.dtsi"
+#include <dt-bindings/leds/common.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/sound/meson-aiu.h>
+
+/ {
+    compatible = "amlogic,p212", "amlogic,s905x", "amlogic,meson-gxl";
+    model = "Amlogic Meson GXL (S905X) CumeBox2 Board";
+
+    aliases {
+        serial0 = &uart_AO;
+        ethernet0 = &ethmac;
+    };
+
+    memory@0 {
+        device_type = "memory";
+        reg = <0x0 0x0 0x0 0x80000000>;// 2G
+    };
+
+    adc-keys {
+        compatible = "adc-keys";
+        io-channels = <&saradc 0>;
+        io-channel-names = "buttons";
+        keyup-threshold-microvolt = <1710000>;
+
+        button-function {
+            label = "Function";
+            linux,code = <KEY_FN>;
+            press-threshold-microvolt = <10000>;
+        };
+    };
+
+    cvbs-connector {
+        compatible = "composite-video-connector";
+        port {
+            cvbs_connector_in: endpoint {
+                remote-endpoint = <&cvbs_vdac_out>;
+            };
+        };
+    };
+
+    hdmi-connector {
+        compatible = "hdmi-connector";
+        type = "a";
+        port {
+            hdmi_connector_in: endpoint {
+                remote-endpoint = <&hdmi_tx_tmds_out>;
+            };
+        };
+    };
+
+
+    leds {
+        compatible = "gpio-leds";
+
+        led_blue: led-blue {
+            label = "led-blue";
+            color = <LED_COLOR_ID_BLUE>;
+            function = LED_FUNCTION_STATUS;
+            gpios = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;     //474
+            default-state = "off";        
+            linux,default-trigger = "default-on";           
+            panic-indicator-inhibit;                         
+        };
+    
+        led_red: led-red {
+            label = "led-red";
+            color = <LED_COLOR_ID_RED>;
+            function = LED_FUNCTION_PANIC;                   
+            gpios = <&gpio GPIODV_26 GPIO_ACTIVE_HIGH>;       //476
+            default-state = "off";
+            panic-indicator;                                  
+        };
+    
+        led_green: led-green {
+            label = "led-green";
+            color = <LED_COLOR_ID_GREEN>;
+            function = LED_FUNCTION_HEARTBEAT;
+            gpios = <&gpio GPIODV_27 GPIO_ACTIVE_HIGH>;       //477
+            default-state = "off";
+            //linux,default-trigger = "heartbeat";
+        };
+
+        eth_led_link: net-link {
+            label = "led-link";
+            gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_HIGH>;         //537
+            linux,default-trigger = "netdev";
+            default-state = "off";
+        };
+
+        eth_led_act: net-act {
+            label = "led-activity"; 
+            gpios = <&gpio GPIOZ_15 GPIO_ACTIVE_HIGH>;        //538
+            linux,default-trigger = "netdev";
+            default-state = "off";
+        };
+    };
+
+    thermal-zones {
+        cpu-thermal {
+            polling-delay-passive = <250>; /* milliseconds */
+            polling-delay = <1000>; /* milliseconds */      
+            thermal-sensors = <&scpi_sensors 0>;
+
+            trips {
+                cpu_active: cpu-active {
+                    temperature = <45000>; /* millicelsius */
+                    hysteresis = <2000>; /* millicelsius */
+                    type = "active";
+                };
+
+                cpu_passive: cpu-passive {
+                    temperature = <90000>; /* millicelsius */
+                    hysteresis = <2000>; /* millicelsius */
+                    type = "passive";
+                };
+
+                cpu_critical: cpu-critical {
+                    temperature = <100000>; /* millicelsius */
+                    hysteresis = <2000>; /* millicelsius */
+                    type = "critical";
+                };
+            };
+
+            cooling-maps {
+                map0 {
+                    trip = <&cpu_active>;
+                    cooling-device = <&gpio_fan THERMAL_NO_LIMIT 1>;
+                };
+
+                map1 {
+                    trip = <&cpu_passive>;
+                    cooling-device = <&gpio_fan THERMAL_NO_LIMIT 1>;
+                };
+
+                map2 {
+                    trip = <&cpu_critical>;
+                    cooling-device = <&gpio_fan THERMAL_NO_LIMIT 1>,
+                          <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+                          <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+                          <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+                          <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+                };
+            };
+        };
+    };
+
+    gpio_fan:gpio-fan {
+        #cooling-cells = <2>;
+        compatible = "gpio-fan";
+        status = "okay";
+        gpio-fan,speed-map = <0 0 4500 1>;
+        gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_HIGH>; //3 gpio 504
+    };
+
+    gpio-keys-polled {
+        compatible = "gpio-keys-polled";
+        poll-interval = <100>;
+
+        power-button {
+            label = "power";
+            linux,code = <KEY_POWER>;
+            gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;//2 gpio 503
+        };
+
+        reset-button {
+            label = "reset";
+            linux,code = <KEY_FN_F1>;
+            gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_LOW>;//9 gpio 510
+        };
+
+        ap-button {
+            label = "ap";
+            linux,code = <KEY_FN_F2>;
+            gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;  //6 gpio 507
+        };
+    };
+
+    openvfd {
+        compatible = "open,vfd";
+        dev_name = "openvfd";
+        status = "okay";
+    };
+};
+
+&acodec {
+    AVDD-supply = <&vddio_ao18>;
+    status = "okay";
+};
+
+&aiu {
+    status = "okay";
+};
+
+&cec_AO {
+    status = "okay";
+    pinctrl-0 = <&ao_cec_pins>;
+    pinctrl-names = "default";
+    hdmi-phandle = <&hdmi_tx>;
+};
+
+&cvbs_vdac_port {
+    cvbs_vdac_out: endpoint {
+        remote-endpoint = <&cvbs_connector_in>;
+    };
+};
+
+&hdmi_tx {
+    status = "okay";
+    pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+    pinctrl-names = "default";
+    hdmi-supply = <&hdmi_5v>;
+};
+
+&hdmi_tx_tmds_port {
+    hdmi_tx_tmds_out: endpoint {
+        remote-endpoint = <&hdmi_connector_in>;
+    };
+};
+
+/* This UART is brought out to the DB9 connector */
+&uart_AO {
+    status = "okay";
+};
+
+// enable I2C
+&i2c_AO {
+    status = "okay";
+    pinctrl-0 = <&i2c_ao_pins>; //GPIOAO4,GPIOAO5
+    pinctrl-names = "default";
+    clock-frequency = < 400000 >;
+
+    ssd1306: oled@3c {
+    status = "okay";
+        compatible = "solomon,ssd1306fb-i2c";
+        reg = < 0x3c >;
+        solomon,width = < 128 >;
+        solomon,height = < 64 >;
+        solomon,page-offset = < 0 >;
+        solomon,com-invdir;
+    };
+};
+
+&ethmac {
+    status = "okay";
+};
+
+&mali {
+	status = "okay";
+};
+
+
+
+
+
+
+
+
+
+
+
+
