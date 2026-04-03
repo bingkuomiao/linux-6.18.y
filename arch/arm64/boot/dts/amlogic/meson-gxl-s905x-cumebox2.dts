@@ -177,11 +177,11 @@
         };
     };
 
-  # openvfd {
-  #     compatible = "open,vfd";
-  #     dev_name = "openvfd";
-  #     status = "okay";
-  # };
+//  openvfd {
+//      compatible = "open,vfd";
+//      dev_name = "openvfd";
+//      status = "okay";
+//  };
 };
 
 &acodec {
