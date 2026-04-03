@@ -176,6 +176,12 @@
             gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;  //6 gpio 507
         };
     };
+
+    openvfd {
+        compatible = "open,vfd";
+        dev_name = "openvfd";
+        status = "okay";
+    };
 };
 
 &acodec {
@@ -224,6 +230,24 @@
 
 &mali {
 	status = "okay";
+};
+
+// enable I2C
+&i2c_AO {
+    status = "okay";
+    pinctrl-0 = <&i2c_ao_pins>; //GPIOAO4,GPIOAO5
+    pinctrl-names = "default";
+    clock-frequency = < 400000 >;
+
+    ssd1306: oled@3c {
+    status = "okay";
+        compatible = "solomon,ssd1306fb-i2c";
+        reg = < 0x3c >;
+        solomon,width = < 128 >;
+        solomon,height = < 64 >;
+        solomon,page-offset = < 0 >;
+        solomon,com-invdir;
+    };
 };
 
 
