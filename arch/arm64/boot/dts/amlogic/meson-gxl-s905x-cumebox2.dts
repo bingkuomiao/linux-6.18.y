@@ -234,7 +234,7 @@
 
 // enable I2C
 &i2c_AO {
-    status = "okay";
+    status = "disable";
     pinctrl-0 = <&i2c_ao_pins>; //GPIOAO4,GPIOAO5
     pinctrl-names = "default";
     clock-frequency = < 400000 >;
