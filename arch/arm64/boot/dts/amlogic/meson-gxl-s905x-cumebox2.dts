@@ -33,6 +33,13 @@
         };
     };
 
+    dio2133: analog-amplifier {
+        compatible = "simple-audio-amplifier";
+        sound-name-prefix = "AU2";
+        VCC-supply = <&hdmi_5v>;
+        enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
+    };
+
     cvbs-connector {
         compatible = "composite-video-connector";
         port {
