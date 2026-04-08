@@ -51,6 +51,57 @@
         };
     };
 
+    sound {
+        compatible = "amlogic,gx-sound-card";
+        model = "S905X-P212";
+        audio-aux-devs = <&dio2133>;
+        audio-widgets = "Line", "Lineout";
+        audio-routing = "AU2 INL", "ACODEC LOLN",
+                "AU2 INR", "ACODEC LORN",
+                "Lineout", "AU2 OUTL",
+                "Lineout", "AU2 OUTR";
+        assigned-clocks = <&clkc CLKID_MPLL0>,
+                  <&clkc CLKID_MPLL1>,
+                  <&clkc CLKID_MPLL2>;
+        assigned-clock-parents = <0>, <0>, <0>;
+        assigned-clock-rates = <294912000>,
+                       <270950400>,
+                       <393216000>;
+        status = "okay";
+
+        dai-link-0 {
+            sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
+        };
+
+        dai-link-1 {
+            sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
+            dai-format = "i2s";
+            mclk-fs = <256>;
+
+            codec-0 {
+                sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
+            };
+
+            codec-1 {
+                sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
+            };
+        };
+
+        dai-link-2 {
+            sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
+            codec-0 {
+                sound-dai = <&hdmi_tx>;
+            };
+        };
+
+        dai-link-3 {
+            sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
+            codec-0 {
+                sound-dai = <&acodec>;
+            };
+        };
+    };
+
     leds {
         compatible = "gpio-leds";
 
@@ -238,16 +289,6 @@
     pinctrl-0 = <&i2c_ao_pins>; //GPIOAO4,GPIOAO5
     pinctrl-names = "default";
     clock-frequency = < 400000 >;
-
-    ssd1306: oled@3c {
-    status = "disabled";
-        compatible = "solomon,ssd1306fb-i2c";
-        reg = < 0x3c >;
-        solomon,width = < 128 >;
-        solomon,height = < 64 >;
-        solomon,page-offset = < 0 >;
-        solomon,com-invdir;
-    };
 };
 
 
