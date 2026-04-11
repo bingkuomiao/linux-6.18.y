@@ -295,6 +295,7 @@
 
 &ethmac {
     status = "okay";
+    wakeup-source;
 };
 
 &mali {
