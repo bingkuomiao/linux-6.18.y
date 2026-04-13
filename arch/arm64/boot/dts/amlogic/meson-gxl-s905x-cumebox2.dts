@@ -167,20 +167,20 @@
 
             trips {
                 cpu_active: cpu-active {
-                    temperature = <45000>; /* millicelsius */
-                    hysteresis = <2000>; /* millicelsius */
+                    temperature = <50000>; /* millicelsius */
+                    hysteresis = <3000>; /* millicelsius */
                     type = "active";
                 };
 
                 cpu_passive: cpu-passive {
                     temperature = <85000>; /* millicelsius */
-                    hysteresis = <2000>; /* millicelsius */
+                    hysteresis = <3000>; /* millicelsius */
                     type = "passive";
                 };
 
                 cpu_critical: cpu-critical {
-                    temperature = <100000>; /* millicelsius */
-                    hysteresis = <2000>; /* millicelsius */
+                    temperature = <95000>; /* millicelsius */
+                    hysteresis = <3000>; /* millicelsius */
                     type = "critical";
                 };
             };
@@ -301,9 +301,3 @@
 &mali {
 	status = "okay";
 };
-
-
-
-
-
-
